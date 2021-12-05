@@ -1,0 +1,168 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stateful-app-2021-12-05-21-58-15"
+Resources:
+  FunctionA:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionA/
+      Handler: FunctionA.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionB:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionB/
+      Handler: FunctionB.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionC:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionC/
+      Handler: FunctionC.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  IFCalcAssigna804b1c710664ba88650ad574ea2b72e:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: inlineFunctions/IFCalcAssigna804b1c710664ba88650ad574ea2b72e/
+      Handler: inlines.IFCalcAssigna804b1c710664ba88650ad574ea2b72e::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Role: !GetAtt IAMRole.Arn
+  Getx:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Getx/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Getx.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  Setx:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Setx/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Setx.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  Getd:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Getd/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Getd.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  Setd:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Setd/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Setd.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  Gets:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Gets/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Gets.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  Sets:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/Sets/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: Sets.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  StepFunction:
+    Type: AWS::Serverless::StateMachine
+    DependsOn:
+    - IAMRole
+    Properties:
+      DefinitionSubstitutions:
+        IFCalcAssigna804b1c710664ba88650ad574ea2b72eArn: !GetAtt IFCalcAssigna804b1c710664ba88650ad574ea2b72e.Arn
+        SetdArn: !GetAtt Setd.Arn
+        GetxArn: !GetAtt Getx.Arn
+        GetdArn: !GetAtt Getd.Arn
+        SetsArn: !GetAtt Sets.Arn
+        DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+        GetsArn: !GetAtt Gets.Arn
+        FunctionCArn: !GetAtt FunctionC.Arn
+        FunctionAArn: !GetAtt FunctionA.Arn
+        FunctionBArn: !GetAtt FunctionB.Arn
+        SetxArn: !GetAtt Setx.Arn
+      DefinitionUri: statemachine/stepFunction.asl.json
+      Role: !GetAtt IAMRole.Arn
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - "lambda.amazonaws.com"
+            - "elasticfilesystem.amazonaws.com"
+            - "states.amazonaws.com"
+          Action:
+          - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+      - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+      - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      MaxSessionDuration: 3600
+      Path: /service-role/
+      RoleName: StaticIAM-stateful-app-2021-12-05-21-58-15
+  DynamoDBGlobal:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: variables
+        Type: String

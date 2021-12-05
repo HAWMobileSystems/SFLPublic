@@ -1,0 +1,201 @@
+{
+  "StartAt" : "Pass-Assignment-557af0a0-fcca-4822-b86b-f4a45a843370",
+  "States" : {
+    "Pass-Assignment-557af0a0-fcca-4822-b86b-f4a45a843370" : {
+      "ResultPath" : "$.x",
+      "Next" : "Setx-8467ccab-aff9-4521-a8e1-3b9bf34a507b",
+      "Result" : 0,
+      "Type" : "Pass"
+    },
+    "Setx-8467ccab-aff9-4521-a8e1-3b9bf34a507b" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-ce7215d0-b099-4226-a8bd-75e8d545548e",
+      "Resource" : "${SetxArn}",
+      "Type" : "Task"
+    },
+    "Getx-ce7215d0-b099-4226-a8bd-75e8d545548e" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-Assignment-09dba0ea-4927-45d2-8034-d9617b08f56f",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Task-Assignment-09dba0ea-4927-45d2-8034-d9617b08f56f" : {
+      "Next" : "Setd-516af85c-ce46-4e2b-8091-37b58e23ee43",
+      "Resource" : "${IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5Arn}",
+      "Type" : "Task"
+    },
+    "Setd-516af85c-ce46-4e2b-8091-37b58e23ee43" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Pass-Assignment-a7902935-4253-43eb-9c9e-fd62c8ae81d5",
+      "Resource" : "${SetdArn}",
+      "Type" : "Task"
+    },
+    "Pass-Assignment-a7902935-4253-43eb-9c9e-fd62c8ae81d5" : {
+      "ResultPath" : "$.s",
+      "Next" : "Sets-a5ff1127-9cc5-4267-8624-d5d7756944dd",
+      "Result" : "zero",
+      "Type" : "Pass"
+    },
+    "Sets-a5ff1127-9cc5-4267-8624-d5d7756944dd" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-e6fd815a-e5a2-41fc-9797-52055e1d8e09",
+      "Resource" : "${SetsArn}",
+      "Type" : "Task"
+    },
+    "Getx-e6fd815a-e5a2-41fc-9797-52055e1d8e09" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-de072f1e-d60e-4a8e-8c8b-1135d52e5518",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Choice-de072f1e-d60e-4a8e-8c8b-1135d52e5518" : {
+      "Default" : "EndOfChoice-80789fb0-536d-4a6e-a753-7871a10cb43b",
+      "Choices" : [ {
+        "Variable" : "$.x",
+        "NumericLessThan" : 10,
+        "Next" : "Getx-6059fec4-98f9-4741-81d9-58c4be54b14a"
+      } ],
+      "Type" : "Choice"
+    },
+    "Getx-6059fec4-98f9-4741-81d9-58c4be54b14a" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-e7d62230-5782-43c5-85c6-76b9776d2a7e",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Task-e7d62230-5782-43c5-85c6-76b9776d2a7e" : {
+      "Next" : "Setx-b014f615-9719-4822-bc07-8a3bae87c8fe",
+      "Resource" : "${FunctionAArn}",
+      "Type" : "Task"
+    },
+    "Setx-b014f615-9719-4822-bc07-8a3bae87c8fe" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-e6fd815a-e5a2-41fc-9797-52055e1d8e09",
+      "Resource" : "${SetxArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-80789fb0-536d-4a6e-a753-7871a10cb43b" : {
+      "ResultPath" : null,
+      "Next" : "Getd-bf5cc70a-5b24-43dc-b9b6-6269a6fca9ae",
+      "Type" : "Pass"
+    },
+    "Getd-bf5cc70a-5b24-43dc-b9b6-6269a6fca9ae" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-798d0504-95a0-49b3-ab7b-5b826a41ad1b",
+      "Resource" : "${GetdArn}",
+      "Type" : "Task"
+    },
+    "Choice-798d0504-95a0-49b3-ab7b-5b826a41ad1b" : {
+      "Default" : "EndOfChoice-2e75d128-6d35-41e7-b407-6eb47397faa0",
+      "Choices" : [ {
+        "Variable" : "$.d",
+        "NumericLessThan" : 6,
+        "Next" : "Getd-2e42d7a3-f946-4f57-8427-6d80966020b2"
+      } ],
+      "Type" : "Choice"
+    },
+    "Getd-2e42d7a3-f946-4f57-8427-6d80966020b2" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-142624e6-c43c-4af1-9a54-ddca16ea6320",
+      "Resource" : "${GetdArn}",
+      "Type" : "Task"
+    },
+    "Task-142624e6-c43c-4af1-9a54-ddca16ea6320" : {
+      "Next" : "Setd-c3a47927-987e-4bdd-8694-30bcd080721d",
+      "Resource" : "${FunctionBArn}",
+      "Type" : "Task"
+    },
+    "Setd-c3a47927-987e-4bdd-8694-30bcd080721d" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Getd-bf5cc70a-5b24-43dc-b9b6-6269a6fca9ae",
+      "Resource" : "${SetdArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-2e75d128-6d35-41e7-b407-6eb47397faa0" : {
+      "ResultPath" : null,
+      "Next" : "Gets-c9cc74ab-959b-4b2b-88a3-4bf41339cbdf",
+      "Type" : "Pass"
+    },
+    "Gets-c9cc74ab-959b-4b2b-88a3-4bf41339cbdf" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-87ff202f-bbb1-4384-b220-26aebaf321c1",
+      "Resource" : "${GetsArn}",
+      "Type" : "Task"
+    },
+    "Choice-87ff202f-bbb1-4384-b220-26aebaf321c1" : {
+      "Default" : "EndOfChoice-c30e0f04-a93d-4a33-9ccb-60cb6a7f6726",
+      "Choices" : [ {
+        "Not" : {
+          "Variable" : "$.s",
+          "StringEquals" : "ten"
+        },
+        "Next" : "Gets-a8985b26-801c-442f-91fc-526abc76507f"
+      } ],
+      "Type" : "Choice"
+    },
+    "Gets-a8985b26-801c-442f-91fc-526abc76507f" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-107f9810-b988-4a42-ad8b-cb7ff84af009",
+      "Resource" : "${GetsArn}",
+      "Type" : "Task"
+    },
+    "Task-107f9810-b988-4a42-ad8b-cb7ff84af009" : {
+      "Next" : "Sets-a1c98276-3aa2-4dbc-959a-9a1766fd6650",
+      "Resource" : "${FunctionCArn}",
+      "Type" : "Task"
+    },
+    "Sets-a1c98276-3aa2-4dbc-959a-9a1766fd6650" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Gets-c9cc74ab-959b-4b2b-88a3-4bf41339cbdf",
+      "Resource" : "${SetsArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-c30e0f04-a93d-4a33-9ccb-60cb6a7f6726" : {
+      "ResultPath" : null,
+      "Next" : "endStatement",
+      "Type" : "Pass"
+    },
+    "endStatement" : {
+      "Type" : "Succeed"
+    }
+  }
+}

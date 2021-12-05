@@ -1,0 +1,83 @@
+{
+  "StartAt" : "Pass-Assignment-f0085261-4feb-4a7d-85ee-25da225e24ea",
+  "States" : {
+    "Pass-Assignment-f0085261-4feb-4a7d-85ee-25da225e24ea" : {
+      "ResultPath" : "$.dataExists",
+      "Next" : "Pass-Assignment-07d5a5cc-2aff-405d-8682-157327962b0e",
+      "Result" : false,
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-07d5a5cc-2aff-405d-8682-157327962b0e" : {
+      "ResultPath" : "$.databaseName",
+      "Next" : "Pass-Assignment-727b75e7-d67a-46d0-bd10-e6d1bf37bf7a",
+      "Result" : "ConfiguredDatabase",
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-727b75e7-d67a-46d0-bd10-e6d1bf37bf7a" : {
+      "ResultPath" : "$.trainingResults",
+      "Next" : "Task-5d63f333-c22a-4a29-a8ac-ad8196a7e93c",
+      "Result" : "",
+      "Type" : "Pass"
+    },
+    "Task-5d63f333-c22a-4a29-a8ac-ad8196a7e93c" : {
+      "Next" : "Choice-58805d93-a478-4855-9196-ec5d184bf5d6",
+      "Resource" : "${CheckDataArn}",
+      "Type" : "Task"
+    },
+    "Choice-58805d93-a478-4855-9196-ec5d184bf5d6" : {
+      "Default" : "EndOfChoice-52c714ce-954a-4b0b-a32c-fa478dba9212",
+      "Choices" : [ {
+        "Variable" : "$.dataExists",
+        "BooleanEquals" : false,
+        "Next" : "Task-e6f1588c-2f2e-4309-992a-51e91752e476"
+      } ],
+      "Type" : "Choice"
+    },
+    "Task-e6f1588c-2f2e-4309-992a-51e91752e476" : {
+      "Next" : "Task-3b95cd1d-6ba7-4bd3-a06f-2c98694a1fda",
+      "Resource" : "${UpdateDataInDBArn}",
+      "Type" : "Task"
+    },
+    "Task-3b95cd1d-6ba7-4bd3-a06f-2c98694a1fda" : {
+      "Next" : "EndOfChoice-52c714ce-954a-4b0b-a32c-fa478dba9212",
+      "Resource" : "${MapAndOutlierRemovalArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-52c714ce-954a-4b0b-a32c-fa478dba9212" : {
+      "ResultPath" : null,
+      "Next" : "GettrainingParameters-ef359830-1cb0-4728-b6fe-018cad300e94",
+      "Type" : "Pass"
+    },
+    "GettrainingParameters-ef359830-1cb0-4728-b6fe-018cad300e94" : {
+      "ResultPath" : "$.trainingParameters",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-7b791a0b-ed31-45bc-9ce2-67955bb720be",
+      "Resource" : "${GettrainingParametersArn}",
+      "Type" : "Task"
+    },
+    "Task-7b791a0b-ed31-45bc-9ce2-67955bb720be" : {
+      "Next" : "SettrainingParameters-7803962e-c205-4bb1-94e5-f076a297974b",
+      "Resource" : "${TrainModelArn}",
+      "Type" : "Task"
+    },
+    "SettrainingParameters-7803962e-c205-4bb1-94e5-f076a297974b" : {
+      "ResultPath" : "$.trainingParameters",
+      "Parameters" : {
+        "Input.$" : "$"
+      },
+      "Next" : "Task-27c38484-cbbf-47e1-983a-f8331110bcf5",
+      "Resource" : "${SettrainingParametersArn}",
+      "Type" : "Task"
+    },
+    "Task-27c38484-cbbf-47e1-983a-f8331110bcf5" : {
+      "Next" : "endStatement",
+      "Resource" : "${StoreResultsArn}",
+      "Type" : "Task"
+    },
+    "endStatement" : {
+      "Type" : "Succeed"
+    }
+  }
+}

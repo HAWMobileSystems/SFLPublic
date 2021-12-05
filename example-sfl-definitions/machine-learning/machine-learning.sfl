@@ -1,0 +1,28 @@
+Statics {
+    Boolean dataExists
+    String databaseName
+    global String trainingParameters
+    String trainingResults
+}
+Functions {
+    CheckData<python3_8>(dataExists) ~!{        #...    }!~
+    UpdateDataInDB<python3_8>(databaseName) ~!{        #...    }!~
+    MapAndOutlierRemoval<python3_8>(databaseName) ~!{        #...    }!~
+    TrainModel<python3_8>(trainingParameters, databaseName, trainingResults) ~!{        #...    }!~
+    StoreResults<python3_8>(trainingResults) ~!{        #...    }!~
+}
+StateCode {
+    Start() {
+        dataExists = false
+        databaseName = "ConfiguredDatabase"
+        trainingResults = ""
+
+        CheckData()
+        if (dataExists == false) {
+            UpdateDataInDB()
+            MapAndOutlierRemoval()
+        }
+        TrainModel()
+        StoreResults()
+    }
+}

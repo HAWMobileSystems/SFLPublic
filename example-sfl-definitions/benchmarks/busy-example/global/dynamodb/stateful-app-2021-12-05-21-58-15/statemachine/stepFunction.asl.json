@@ -1,0 +1,214 @@
+{
+  "StartAt" : "Pass-Assignment-f64eb2a6-a688-4578-b353-75b0d098a9c8",
+  "States" : {
+    "Pass-Assignment-f64eb2a6-a688-4578-b353-75b0d098a9c8" : {
+      "ResultPath" : "$.x",
+      "Next" : "Setx-395674da-f6e7-4b71-b49c-ad97575c585d",
+      "Result" : 0,
+      "Type" : "Pass"
+    },
+    "Setx-395674da-f6e7-4b71-b49c-ad97575c585d" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-ef2c65d0-0856-4ec2-a336-a360895b48e5",
+      "Resource" : "${SetxArn}",
+      "Type" : "Task"
+    },
+    "Getx-ef2c65d0-0856-4ec2-a336-a360895b48e5" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-Assignment-57e6df81-6042-49d3-b022-ab9100617d7a",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Task-Assignment-57e6df81-6042-49d3-b022-ab9100617d7a" : {
+      "Next" : "Setd-65429b9b-0150-4614-b893-e2d389d50653",
+      "Resource" : "${IFCalcAssigna804b1c710664ba88650ad574ea2b72eArn}",
+      "Type" : "Task"
+    },
+    "Setd-65429b9b-0150-4614-b893-e2d389d50653" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Pass-Assignment-39afed5d-f025-4c20-946b-19c12861137c",
+      "Resource" : "${SetdArn}",
+      "Type" : "Task"
+    },
+    "Pass-Assignment-39afed5d-f025-4c20-946b-19c12861137c" : {
+      "ResultPath" : "$.s",
+      "Next" : "Sets-4883fdae-8962-47c1-a651-b22393f5c35c",
+      "Result" : "zero",
+      "Type" : "Pass"
+    },
+    "Sets-4883fdae-8962-47c1-a651-b22393f5c35c" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-c394be39-e2c1-455e-83d9-28563ec898b9",
+      "Resource" : "${SetsArn}",
+      "Type" : "Task"
+    },
+    "Getx-c394be39-e2c1-455e-83d9-28563ec898b9" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-d8c418e5-1c88-414c-9a65-1769417dd877",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Choice-d8c418e5-1c88-414c-9a65-1769417dd877" : {
+      "Default" : "EndOfChoice-06d113cb-0e4b-4d1e-a474-8bc3958820d5",
+      "Choices" : [ {
+        "Variable" : "$.x",
+        "NumericLessThan" : 10,
+        "Next" : "Getx-7f7c490e-6ab4-4846-9de8-8d0b90408628"
+      } ],
+      "Type" : "Choice"
+    },
+    "Getx-7f7c490e-6ab4-4846-9de8-8d0b90408628" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-b85fd07d-2c6b-4bcf-8fb4-1faa8f510dbe",
+      "Resource" : "${GetxArn}",
+      "Type" : "Task"
+    },
+    "Task-b85fd07d-2c6b-4bcf-8fb4-1faa8f510dbe" : {
+      "Next" : "Setx-1a4906dd-dd4f-4463-bc33-78e46cced947",
+      "Resource" : "${FunctionAArn}",
+      "Type" : "Task"
+    },
+    "Setx-1a4906dd-dd4f-4463-bc33-78e46cced947" : {
+      "ResultPath" : "$.x",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Getx-c394be39-e2c1-455e-83d9-28563ec898b9",
+      "Resource" : "${SetxArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-06d113cb-0e4b-4d1e-a474-8bc3958820d5" : {
+      "ResultPath" : null,
+      "Next" : "Getd-6c04c537-0825-4ea2-bc69-f1ba7b4af752",
+      "Type" : "Pass"
+    },
+    "Getd-6c04c537-0825-4ea2-bc69-f1ba7b4af752" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-549db3a9-c0af-4f2c-9ca7-3137904a34c2",
+      "Resource" : "${GetdArn}",
+      "Type" : "Task"
+    },
+    "Choice-549db3a9-c0af-4f2c-9ca7-3137904a34c2" : {
+      "Default" : "EndOfChoice-6be3ad83-8aec-48d3-90bc-9846fd57b1ce",
+      "Choices" : [ {
+        "Variable" : "$.d",
+        "NumericLessThan" : 6,
+        "Next" : "Getd-8099cd60-5617-4b83-aa6f-cac0efc08a8a"
+      } ],
+      "Type" : "Choice"
+    },
+    "Getd-8099cd60-5617-4b83-aa6f-cac0efc08a8a" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-0701347f-a3f1-4334-979a-1c1367f65805",
+      "Resource" : "${GetdArn}",
+      "Type" : "Task"
+    },
+    "Task-0701347f-a3f1-4334-979a-1c1367f65805" : {
+      "Next" : "Setd-8c527c34-98b3-4555-80e4-c1f7e2937770",
+      "Resource" : "${FunctionBArn}",
+      "Type" : "Task"
+    },
+    "Setd-8c527c34-98b3-4555-80e4-c1f7e2937770" : {
+      "ResultPath" : "$.d",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Getd-6c04c537-0825-4ea2-bc69-f1ba7b4af752",
+      "Resource" : "${SetdArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-6be3ad83-8aec-48d3-90bc-9846fd57b1ce" : {
+      "ResultPath" : null,
+      "Next" : "Gets-c2cf56f6-6293-47ac-a5fb-d4faf3760d2d",
+      "Type" : "Pass"
+    },
+    "Gets-c2cf56f6-6293-47ac-a5fb-d4faf3760d2d" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Choice-715b705f-d551-438c-a5f8-52898b1d85bf",
+      "Resource" : "${GetsArn}",
+      "Type" : "Task"
+    },
+    "Choice-715b705f-d551-438c-a5f8-52898b1d85bf" : {
+      "Default" : "EndOfChoice-7f6a0cdd-7e21-42b4-a78e-68f1c3f7a2f4",
+      "Choices" : [ {
+        "Not" : {
+          "Variable" : "$.s",
+          "StringEquals" : "ten"
+        },
+        "Next" : "Gets-27ba49e0-81f2-4d9a-83db-196772ec1ca2"
+      } ],
+      "Type" : "Choice"
+    },
+    "Gets-27ba49e0-81f2-4d9a-83db-196772ec1ca2" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-ff326004-5a9c-43e9-af7a-3d868f91cddf",
+      "Resource" : "${GetsArn}",
+      "Type" : "Task"
+    },
+    "Task-ff326004-5a9c-43e9-af7a-3d868f91cddf" : {
+      "Next" : "Sets-6d3dedef-d05b-4886-812c-7922186b2c9f",
+      "Resource" : "${FunctionCArn}",
+      "Type" : "Task"
+    },
+    "Sets-6d3dedef-d05b-4886-812c-7922186b2c9f" : {
+      "ResultPath" : "$.s",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Gets-c2cf56f6-6293-47ac-a5fb-d4faf3760d2d",
+      "Resource" : "${SetsArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-7f6a0cdd-7e21-42b4-a78e-68f1c3f7a2f4" : {
+      "ResultPath" : null,
+      "Next" : "endStatement",
+      "Type" : "Pass"
+    },
+    "endStatement" : {
+      "Type" : "Succeed"
+    }
+  }
+}

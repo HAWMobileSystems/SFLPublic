@@ -1,0 +1,85 @@
+{
+  "StartAt" : "Pass-Assignment-674a6eea-47c3-4ee9-aac5-65059e7a050a",
+  "States" : {
+    "Pass-Assignment-674a6eea-47c3-4ee9-aac5-65059e7a050a" : {
+      "ResultPath" : "$.dataExists",
+      "Next" : "Pass-Assignment-7adeaf7e-e3ad-4f53-92a3-7d3a88306fe2",
+      "Result" : false,
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-7adeaf7e-e3ad-4f53-92a3-7d3a88306fe2" : {
+      "ResultPath" : "$.databaseName",
+      "Next" : "Pass-Assignment-0b6cd762-e960-4e4a-90b6-86d8f77adfad",
+      "Result" : "ConfiguredDatabase",
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-0b6cd762-e960-4e4a-90b6-86d8f77adfad" : {
+      "ResultPath" : "$.trainingResults",
+      "Next" : "Task-663b7f96-eddc-41c2-bd6f-72c9d1627539",
+      "Result" : "",
+      "Type" : "Pass"
+    },
+    "Task-663b7f96-eddc-41c2-bd6f-72c9d1627539" : {
+      "Next" : "Choice-2195b35e-3a65-4c65-b301-6a5a0d6275e8",
+      "Resource" : "${CheckDataArn}",
+      "Type" : "Task"
+    },
+    "Choice-2195b35e-3a65-4c65-b301-6a5a0d6275e8" : {
+      "Default" : "EndOfChoice-e216cba0-508a-42b6-93b5-c40c25dbe226",
+      "Choices" : [ {
+        "Variable" : "$.dataExists",
+        "BooleanEquals" : false,
+        "Next" : "Task-e99f9a82-3a08-4c69-86b6-b9dc84db58e0"
+      } ],
+      "Type" : "Choice"
+    },
+    "Task-e99f9a82-3a08-4c69-86b6-b9dc84db58e0" : {
+      "Next" : "Task-197ea4ca-3cb9-42f9-a3a0-548fc6f3723c",
+      "Resource" : "${UpdateDataInDBArn}",
+      "Type" : "Task"
+    },
+    "Task-197ea4ca-3cb9-42f9-a3a0-548fc6f3723c" : {
+      "Next" : "EndOfChoice-e216cba0-508a-42b6-93b5-c40c25dbe226",
+      "Resource" : "${MapAndOutlierRemovalArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-e216cba0-508a-42b6-93b5-c40c25dbe226" : {
+      "ResultPath" : null,
+      "Next" : "GettrainingParameters-93e3be0e-b65e-4dce-a1cc-4f4df7c5b60d",
+      "Type" : "Pass"
+    },
+    "GettrainingParameters-93e3be0e-b65e-4dce-a1cc-4f4df7c5b60d" : {
+      "ResultPath" : "$.trainingParameters",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-88aedfcc-2fc8-404c-b607-dc2ab93c98f1",
+      "Resource" : "${GettrainingParametersArn}",
+      "Type" : "Task"
+    },
+    "Task-88aedfcc-2fc8-404c-b607-dc2ab93c98f1" : {
+      "Next" : "SettrainingParameters-6e23e16d-22dd-466c-afd5-9d37f739b350",
+      "Resource" : "${TrainModelArn}",
+      "Type" : "Task"
+    },
+    "SettrainingParameters-6e23e16d-22dd-466c-afd5-9d37f739b350" : {
+      "ResultPath" : "$.trainingParameters",
+      "Parameters" : {
+        "DynamoDBGlobalTableRef" : "${DynamoDBGlobalTableRef}",
+        "Input.$" : "$"
+      },
+      "Next" : "Task-786282fb-8763-4c23-b72f-02d18c5137f5",
+      "Resource" : "${SettrainingParametersArn}",
+      "Type" : "Task"
+    },
+    "Task-786282fb-8763-4c23-b72f-02d18c5137f5" : {
+      "Next" : "endStatement",
+      "Resource" : "${StoreResultsArn}",
+      "Type" : "Task"
+    },
+    "endStatement" : {
+      "Type" : "Succeed"
+    }
+  }
+}

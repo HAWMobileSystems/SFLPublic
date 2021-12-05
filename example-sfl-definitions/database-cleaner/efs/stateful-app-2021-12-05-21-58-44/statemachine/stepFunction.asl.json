@@ -1,0 +1,109 @@
+{
+  "StartAt" : "Pass-Assignment-e7c93b8d-4585-4e79-8da8-c7b9e4bb63e2",
+  "States" : {
+    "Pass-Assignment-e7c93b8d-4585-4e79-8da8-c7b9e4bb63e2" : {
+      "ResultPath" : "$.clean",
+      "Next" : "Pass-Assignment-a16d3464-4110-4e18-9305-573a610deaac",
+      "Result" : false,
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-a16d3464-4110-4e18-9305-573a610deaac" : {
+      "ResultPath" : "$.cleanAll",
+      "Next" : "Pass-Assignment-164d5816-ee52-4299-9f00-0120d94b9c69",
+      "Result" : false,
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-164d5816-ee52-4299-9f00-0120d94b9c69" : {
+      "ResultPath" : "$.badEndingList",
+      "Next" : "Pass-Assignment-a470fc05-8d7d-47f2-84a6-00684189eaaf",
+      "Result" : "",
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-a470fc05-8d7d-47f2-84a6-00684189eaaf" : {
+      "ResultPath" : "$.foundEntries",
+      "Next" : "Pass-Assignment-4e3b5e78-c159-45f0-a6db-37e85b18f3a5",
+      "Result" : "",
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-4e3b5e78-c159-45f0-a6db-37e85b18f3a5" : {
+      "ResultPath" : "$.selectedEntries",
+      "Next" : "Pass-Assignment-be7c2a0c-7a2a-4fe5-a9a5-c3f096a7e829",
+      "Result" : "",
+      "Type" : "Pass"
+    },
+    "Pass-Assignment-be7c2a0c-7a2a-4fe5-a9a5-c3f096a7e829" : {
+      "ResultPath" : "$.countBadEntries",
+      "Next" : "Task-da003ecd-4a4a-4f4d-ba48-ab59074b0649",
+      "Result" : 0,
+      "Type" : "Pass"
+    },
+    "Task-da003ecd-4a4a-4f4d-ba48-ab59074b0649" : {
+      "Next" : "Task-6e8998e6-6516-4b62-a25b-4695970bd02f",
+      "Resource" : "${FetchBadEndingsArn}",
+      "Type" : "Task"
+    },
+    "Task-6e8998e6-6516-4b62-a25b-4695970bd02f" : {
+      "Next" : "Task-2b93e7ee-e198-4e02-adec-1927d7ac5c41",
+      "Resource" : "${AnalyseDatabaseArn}",
+      "Type" : "Task"
+    },
+    "Task-2b93e7ee-e198-4e02-adec-1927d7ac5c41" : {
+      "Next" : "Task-27316843-94a3-434a-af21-db28e1a705d4",
+      "Resource" : "${ShowResultsArn}",
+      "Type" : "Task"
+    },
+    "Task-27316843-94a3-434a-af21-db28e1a705d4" : {
+      "Parameters" : {
+        "FunctionName" : "${WaitForProceedWrapperRef}",
+        "Payload" : {
+          "Input.$" : "$",
+          "taskToken.$" : "$$.Task.Token"
+        }
+      },
+      "Next" : "Choice-eb9ad140-0dad-4d9c-aae2-eaa8d7d14d73",
+      "Resource" : "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "Type" : "Task"
+    },
+    "Choice-eb9ad140-0dad-4d9c-aae2-eaa8d7d14d73" : {
+      "Default" : "EndOfChoice-98f49af8-e072-490f-9dd7-db0c44d9f7f8",
+      "Choices" : [ {
+        "Variable" : "$.clean",
+        "BooleanEquals" : true,
+        "Next" : "Choice-5bea431c-f073-49fd-886e-c845b904513f"
+      } ],
+      "Type" : "Choice"
+    },
+    "Choice-5bea431c-f073-49fd-886e-c845b904513f" : {
+      "Default" : "Task-c7dafb5f-80ea-467a-b8f2-397a333a3141",
+      "Choices" : [ {
+        "Variable" : "$.cleanAll",
+        "BooleanEquals" : true,
+        "Next" : "Task-25232698-13dd-405a-a4bf-8eecfeca70f4"
+      } ],
+      "Type" : "Choice"
+    },
+    "Task-25232698-13dd-405a-a4bf-8eecfeca70f4" : {
+      "Next" : "EndOfChoice-9670f419-0c1d-4215-80f2-f21fc3e2ec3c",
+      "Resource" : "${CleanDatabaseArn}",
+      "Type" : "Task"
+    },
+    "Task-c7dafb5f-80ea-467a-b8f2-397a333a3141" : {
+      "Next" : "EndOfChoice-9670f419-0c1d-4215-80f2-f21fc3e2ec3c",
+      "Resource" : "${CleanSelectedArn}",
+      "Type" : "Task"
+    },
+    "EndOfChoice-9670f419-0c1d-4215-80f2-f21fc3e2ec3c" : {
+      "ResultPath" : null,
+      "Next" : "EndOfChoice-98f49af8-e072-490f-9dd7-db0c44d9f7f8",
+      "Type" : "Pass"
+    },
+    "EndOfChoice-98f49af8-e072-490f-9dd7-db0c44d9f7f8" : {
+      "ResultPath" : null,
+      "Next" : "endStatement",
+      "Type" : "Pass"
+    },
+    "endStatement" : {
+      "Type" : "Succeed"
+    }
+  }
+}

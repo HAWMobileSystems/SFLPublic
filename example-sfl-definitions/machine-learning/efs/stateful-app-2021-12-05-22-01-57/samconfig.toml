@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "stateful-app-2021-12-05-22-01-57"
+s3_bucket = "aws-sam-cli-managed-stateful-app-2021-12-05-22-01-57"
+s3_prefix = "stateful-app-2021-12-05-22-01-57"
+region = "eu-central-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"

@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stateful-app-2021-12-05-21-57-34"
+Resources:
+  FunctionA:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionA/
+      Handler: FunctionA.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionB:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionB/
+      Handler: FunctionB.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionC:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionC/
+      Handler: FunctionC.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  IFCalcAssignbda25cb68e8f43dcbad7f6bac21f3fb4:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: inlineFunctions/IFCalcAssignbda25cb68e8f43dcbad7f6bac21f3fb4/
+      Handler: inlines.IFCalcAssignbda25cb68e8f43dcbad7f6bac21f3fb4::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Role: !GetAtt IAMRole.Arn
+  StepFunction:
+    Type: AWS::Serverless::StateMachine
+    DependsOn:
+    - IAMRole
+    Properties:
+      DefinitionSubstitutions:
+        IFCalcAssignbda25cb68e8f43dcbad7f6bac21f3fb4Arn: !GetAtt IFCalcAssignbda25cb68e8f43dcbad7f6bac21f3fb4.Arn
+        FunctionCArn: !GetAtt FunctionC.Arn
+        FunctionAArn: !GetAtt FunctionA.Arn
+        FunctionBArn: !GetAtt FunctionB.Arn
+      DefinitionUri: statemachine/stepFunction.asl.json
+      Role: !GetAtt IAMRole.Arn
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - "lambda.amazonaws.com"
+            - "elasticfilesystem.amazonaws.com"
+            - "states.amazonaws.com"
+          Action:
+          - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+      - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+      - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      MaxSessionDuration: 3600
+      Path: /service-role/
+      RoleName: StaticIAM-stateful-app-2021-12-05-21-57-34

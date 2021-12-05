@@ -1,0 +1,392 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stateful-app-2021-12-05-21-55-37"
+Resources:
+  FunctionA:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionA/
+      Handler: FunctionA.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionB:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionB/
+      Handler: FunctionB.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  FunctionC:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FunctionC/
+      Handler: FunctionC.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: inlineFunctions/IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5/
+      Handler: inlines.IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Role: !GetAtt IAMRole.Arn
+  Getx:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Getx/
+      Handler: Getx.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  Setx:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Setx/
+      Handler: Setx.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  Getd:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Getd/
+      Handler: Getd.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  Setd:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Setd/
+      Handler: Setd.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  Gets:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Gets/
+      Handler: Gets.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  Sets:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - Efs
+    - EfsAccess
+    - Vpc
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      CodeUri: functions/Sets/
+      Handler: Sets.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+      VpcConfig:
+        SecurityGroupIds:
+        - !GetAtt Vpc.DefaultSecurityGroup
+        SubnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+        - !Ref SubnetC
+      FileSystemConfigs:
+      - Arn: !GetAtt EfsAccess.Arn
+        LocalMountPath: /mnt/statics
+  StepFunction:
+    Type: AWS::Serverless::StateMachine
+    DependsOn:
+    - IAMRole
+    Properties:
+      DefinitionSubstitutions:
+        IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5Arn: !GetAtt IFCalcAssignb620af17ec1d48c1b94a1665d2b608b5.Arn
+        SetdArn: !GetAtt Setd.Arn
+        GetxArn: !GetAtt Getx.Arn
+        GetdArn: !GetAtt Getd.Arn
+        SetsArn: !GetAtt Sets.Arn
+        GetsArn: !GetAtt Gets.Arn
+        FunctionCArn: !GetAtt FunctionC.Arn
+        FunctionAArn: !GetAtt FunctionA.Arn
+        FunctionBArn: !GetAtt FunctionB.Arn
+        SetxArn: !GetAtt Setx.Arn
+      DefinitionUri: statemachine/stepFunction.asl.json
+      Role: !GetAtt IAMRole.Arn
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - "lambda.amazonaws.com"
+            - "elasticfilesystem.amazonaws.com"
+            - "states.amazonaws.com"
+          Action:
+          - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+      - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+      - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      MaxSessionDuration: 3600
+      Path: /service-role/
+      RoleName: StaticIAM-stateful-app-2021-12-05-21-55-37
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+  SubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.31.1.0/24
+      VpcId: !Ref Vpc
+      AvailabilityZone: "eu-central-1a"
+  SubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.31.2.0/24
+      VpcId: !Ref Vpc
+      AvailabilityZone: "eu-central-1b"
+  SubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 172.31.3.0/24
+      VpcId: !Ref Vpc
+      AvailabilityZone: "eu-central-1c"
+  Efs:
+    Type: AWS::EFS::FileSystem
+  EfsMountA:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - Efs
+    - SubnetA
+    Properties:
+      FileSystemId: !Ref Efs
+      SubnetId: !Ref SubnetA
+      SecurityGroups:
+      - !GetAtt Vpc.DefaultSecurityGroup
+  EfsMountB:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - Efs
+    - SubnetB
+    Properties:
+      FileSystemId: !Ref Efs
+      SubnetId: !Ref SubnetB
+      SecurityGroups:
+      - !GetAtt Vpc.DefaultSecurityGroup
+  EfsMountC:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - Efs
+    - SubnetC
+    Properties:
+      FileSystemId: !Ref Efs
+      SubnetId: !Ref SubnetC
+      SecurityGroups:
+      - !GetAtt Vpc.DefaultSecurityGroup
+  EfsAccess:
+    Type: AWS::EFS::AccessPoint
+    DependsOn:
+    - EfsMountA
+    - EfsMountB
+    - EfsMountC
+    Properties:
+      FileSystemId: !GetAtt Efs.FileSystemId
+      PosixUser:
+        Uid: "1001"
+        Gid: "1001"
+      RootDirectory:
+        CreationInfo:
+          OwnerUid: "1001"
+          OwnerGid: "1001"
+          Permissions: "0750"
+        Path: "/statics"
+  VpcInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn:
+    - Vpc
+  VpcGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn:
+    - Vpc
+    - VpcInternetGateway
+    Properties:
+      InternetGatewayId: !Ref VpcInternetGateway
+      VpcId: !Ref Vpc
+  VpcRouteTable:
+    Type: AWS::EC2::RouteTable
+    DependsOn:
+    - Vpc
+    Properties:
+      VpcId: !Ref Vpc
+  VpcInternetRoute:
+    Type: AWS::EC2::Route
+    DependsOn:
+    - VpcInternetGateway
+    - VpcGatewayAttachment
+    - VpcRouteTable
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref VpcInternetGateway
+      RouteTableId: !Ref VpcRouteTable
+  SubnetRouteA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+    - SubnetA
+    - VpcRouteTable
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetA
+  SubnetRouteB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+    - SubnetB
+    - VpcRouteTable
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetB
+  SubnetRouteC:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    DependsOn:
+    - SubnetC
+    - VpcRouteTable
+    Properties:
+      RouteTableId: !Ref VpcRouteTable
+      SubnetId: !Ref SubnetC
+  VpcStatesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    DependsOn:
+    - VpcInternetRoute
+    - SubnetA
+    - SubnetB
+    - SubnetC
+    - Vpc
+    Properties:
+      PrivateDnsEnabled: true
+      ServiceName: com.amazonaws.eu-central-1.states
+      SubnetIds:
+      - !Ref SubnetA
+      - !Ref SubnetB
+      - !Ref SubnetC
+      VpcEndpointType: Interface
+      VpcId: !Ref Vpc
+  VpcLamdaEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    DependsOn:
+    - VpcInternetRoute
+    - SubnetA
+    - SubnetB
+    - SubnetC
+    - Vpc
+    Properties:
+      PrivateDnsEnabled: true
+      ServiceName: com.amazonaws.eu-central-1.lambda
+      SubnetIds:
+      - !Ref SubnetA
+      - !Ref SubnetB
+      - !Ref SubnetC
+      VpcEndpointType: Interface
+      VpcId: !Ref Vpc

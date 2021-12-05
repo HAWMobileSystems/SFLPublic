@@ -1,0 +1,81 @@
+Statics {
+    Boolean clean, cleanAll
+    String badEndingList, foundEntries, selectedEntries
+    Integer countBadEntries
+}
+
+Functions {
+    FetchBadEndings<python3_8>(badEndingList) ~!{
+        #mockup get malicious list
+        badEndingList = "forbidden.com, xyz.com, bad.eu"
+    }!~
+
+    AnalyseDatabase<python3_8>(badEndingList, foundEntries, countBadEntries) ~!{
+        #mockup compare database entries with malicious list
+        #getAllIdsWhichMatch()
+        import random
+        num_list = random.sample(range(0, 200), random.randint(5, 15))
+        foundEntries = ",".join(map(str, num_list))
+    }!~
+
+    ShowResults<python3_8>(foundEntries, countBadEntries) ~!{
+        #mockup show foundEntries as selectable mail addresses list and the total count of malicious emails
+        #showOnWebPage()
+        countBadEntries = len(foundEntries.split(','))
+    }!~
+
+    extern WaitForProceed<python3_8>(clean, cleanAll, selectedEntries) ~!{
+        #passthrough inserted information from the lambda event parameter
+        clean = bool(event["clean"])
+        cleanAll = bool(event["cleanAll"])
+        selectedEntries = str(event["selectedEntries"])
+    }!~
+
+    CleanDatabase<python3_8>(foundEntries) ~!{
+        #mockup cleans / marks all found entries from the database
+        #cleanEntries()
+    }!~
+
+    CleanSelected<python3_8>(selectedEntries) ~!{
+        #mockup cleans / marks only selected entries from the database
+        #cleanSelected()
+    }!~
+}
+
+StateCode {
+    Start() {
+        //Set default values:
+        clean = false
+        cleanAll = false
+        badEndingList = ""
+        foundEntries = ""
+        selectedEntries = ""
+        countBadEntries = 0
+
+        //Get malicious mail endings from trusted source:
+        FetchBadEndings()
+
+        //Analyse own database for bad entries:
+        AnalyseDatabase()
+
+        //Show results on web page:
+        ShowResults()
+
+        //Wait for admin acceptance to proceed:
+        async WaitForProceed()
+
+
+        //Should clean own database from bad entries:
+        if (clean == true) {
+
+            //Should clean all listed bad entries:
+            if (cleanAll == true) {
+                CleanDatabase()
+
+            //Should only clean admin selected entries:
+            } else {
+                CleanSelected()
+            }
+        }
+    }
+}

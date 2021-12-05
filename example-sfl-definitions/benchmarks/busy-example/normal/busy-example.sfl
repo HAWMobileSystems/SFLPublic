@@ -1,0 +1,65 @@
+Statics {
+    Integer x
+    Double d
+    String s
+}
+
+Functions {
+    FunctionA<python3_8>(x) ~!{
+        i = 0
+        while i < 1_000_000 :
+            i += 1
+
+        x = x + 1
+    }!~
+    FunctionB<python3_8>(d) ~!{
+        i = 0
+        while i < 1_000_000 :
+            i += 1
+
+        d = d + 0.5
+    }!~
+    FunctionC<python3_8>(s) ~!{
+        i = 0
+        while i < 1_000_000 :
+            i += 1
+
+        if s == "zero":
+            s = "one"
+        elif s == "one":
+            s = "two"
+        elif s == "two":
+            s = "three"
+        elif s == "three":
+            s = "four"
+        elif s == "four":
+            s = "five"
+        elif s == "five":
+            s = "six"
+        elif s == "six":
+            s = "seven"
+        elif s == "seven":
+            s = "eight"
+        elif s == "eight":
+            s = "nine"
+        elif s == "nine":
+            s = "ten"
+    }!~
+}
+
+StateCode {
+    Start() {
+        x = 0
+        d = x + 1
+        s = "zero"
+        while(x < 10) {
+            FunctionA()
+        }
+        while(d < 6) {
+            FunctionB()
+        }
+        while(s != "ten") {
+            FunctionC()
+        }
+    }
+}

@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stateful-app-2021-12-05-22-00-45"
+Resources:
+  CheckData:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/CheckData/
+      Handler: CheckData.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  UpdateDataInDB:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/UpdateDataInDB/
+      Handler: UpdateDataInDB.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  MapAndOutlierRemoval:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/MapAndOutlierRemoval/
+      Handler: MapAndOutlierRemoval.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  TrainModel:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/TrainModel/
+      Handler: TrainModel.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  StoreResults:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/StoreResults/
+      Handler: StoreResults.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  GettrainingParameters:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/GettrainingParameters/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: GettrainingParameters.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  SettrainingParameters:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBGlobal
+    Properties:
+      CodeUri: functions/SettrainingParameters/
+      Environment:
+        Variables:
+          DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+      Handler: SettrainingParameters.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  StepFunction:
+    Type: AWS::Serverless::StateMachine
+    DependsOn:
+    - IAMRole
+    Properties:
+      DefinitionSubstitutions:
+        TrainModelArn: !GetAtt TrainModel.Arn
+        GettrainingParametersArn: !GetAtt GettrainingParameters.Arn
+        SettrainingParametersArn: !GetAtt SettrainingParameters.Arn
+        MapAndOutlierRemovalArn: !GetAtt MapAndOutlierRemoval.Arn
+        CheckDataArn: !GetAtt CheckData.Arn
+        StoreResultsArn: !GetAtt StoreResults.Arn
+        DynamoDBGlobalTableRef: !Ref DynamoDBGlobal
+        UpdateDataInDBArn: !GetAtt UpdateDataInDB.Arn
+      DefinitionUri: statemachine/stepFunction.asl.json
+      Role: !GetAtt IAMRole.Arn
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - "lambda.amazonaws.com"
+            - "elasticfilesystem.amazonaws.com"
+            - "states.amazonaws.com"
+          Action:
+          - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+      - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+      - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      MaxSessionDuration: 3600
+      Path: /service-role/
+      RoleName: StaticIAM-stateful-app-2021-12-05-22-00-45
+  DynamoDBGlobal:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: variables
+        Type: String

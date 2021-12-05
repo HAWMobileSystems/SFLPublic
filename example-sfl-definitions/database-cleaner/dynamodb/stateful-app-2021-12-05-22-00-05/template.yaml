@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "stateful-app-2021-12-05-22-00-05"
+Resources:
+  FetchBadEndings:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/FetchBadEndings/
+      Handler: FetchBadEndings.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  AnalyseDatabase:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/AnalyseDatabase/
+      Handler: AnalyseDatabase.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  ShowResults:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/ShowResults/
+      Handler: ShowResults.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  WaitForProceed:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBFunction
+    Properties:
+      CodeUri: functions/WaitForProceed/
+      Environment:
+        Variables:
+          DynamoDBFunctionTableRef: !Ref DynamoDBFunction
+      Handler: WaitForProceed.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  WaitForProceedWrapper:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBFunction
+    Properties:
+      CodeUri: functions/WaitForProceedWrapper/
+      Handler: WaitForProceedWrapper.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  WaitForProceedWrapperDirect:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    - DynamoDBFunction
+    Properties:
+      CodeUri: functions/WaitForProceedWrapperDirect/
+      Handler: WaitForProceedWrapperDirect.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  CleanDatabase:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/CleanDatabase/
+      Handler: CleanDatabase.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  CleanSelected:
+    Type: AWS::Serverless::Function
+    DependsOn:
+    - IAMRole
+    Properties:
+      CodeUri: functions/CleanSelected/
+      Handler: CleanSelected.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IAMRole.Arn
+  StepFunction:
+    Type: AWS::Serverless::StateMachine
+    DependsOn:
+    - IAMRole
+    Properties:
+      DefinitionSubstitutions:
+        DynamoDBFunctionTableRef: !Ref DynamoDBFunction
+        FetchBadEndingsArn: !GetAtt FetchBadEndings.Arn
+        CleanDatabaseArn: !GetAtt CleanDatabase.Arn
+        ShowResultsArn: !GetAtt ShowResults.Arn
+        WaitForProceedRef: !Ref WaitForProceed
+        AnalyseDatabaseArn: !GetAtt AnalyseDatabase.Arn
+        WaitForProceedWrapperRef: !Ref WaitForProceedWrapper
+        WaitForProceedWrapperDirectRef: !Ref WaitForProceedWrapperDirect
+        CleanSelectedArn: !GetAtt CleanSelected.Arn
+      DefinitionUri: statemachine/stepFunction.asl.json
+      Role: !GetAtt IAMRole.Arn
+  IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - "lambda.amazonaws.com"
+            - "elasticfilesystem.amazonaws.com"
+            - "states.amazonaws.com"
+          Action:
+          - "sts:AssumeRole"
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+      - arn:aws:iam::aws:policy/AmazonVPCFullAccess
+      - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+      - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      MaxSessionDuration: 3600
+      Path: /service-role/
+      RoleName: StaticIAM-stateful-app-2021-12-05-22-00-05
+  DynamoDBFunction:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: function
+        Type: String
